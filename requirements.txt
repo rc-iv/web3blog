@@ -20,3 +20,4 @@ visitor
 Werkzeug
 WTForms
 gunicorn
+psycopg2-binary

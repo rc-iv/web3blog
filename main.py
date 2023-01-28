@@ -16,6 +16,7 @@ import os
 # Initialization code
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+print(app.config['SECRET_KEY'])
 ckeditor = CKEditor(app)
 Bootstrap(app)
 # Initialize login login_manager
@@ -44,7 +45,7 @@ db = SQLAlchemy(app)
 # CONFIGURE TABLES
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
-    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, primary_key=True)
     author = db.Column(db.String(250), nullable=False)
     title = db.Column(db.String(250), unique=True, nullable=False)
     subtitle = db.Column(db.String(250), nullable=False)
@@ -68,11 +69,11 @@ class User(UserMixin, db.Model):
 
 class Comment(db.Model):
     __tablename__ = "comments"
-    id = db.Column(db.Integer, primary_key=True)
+    comment_id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comment_author = relationship("User", back_populates="comments")
-    post_id = db.Column(db.Integer, db.ForeignKey('blog_posts.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('blog_posts.post_id'))
     parent_post = relationship("BlogPost", back_populates="comments")
 
 
@@ -223,7 +224,7 @@ def edit_post(post_id):
         post.author = edit_form.author.data
         post.body = edit_form.body.data
         db.session.commit()
-        return redirect(url_for("show_post", post_id=post.id))
+        return redirect(url_for("show_post", post_id=post.post_id))
 
     return render_template("make-post.html", form=edit_form)
 
